@@ -17,7 +17,7 @@ public class MeetingSystemV3Test {
 
         String londonTime = "2020-04-01 14:30:00";
         String res = MeetingSystemV3.timeTranslator(londonTime);
-        Assert.assertEquals("The original time has  passed, new meeting time is set at: 2020-06-11 08:30:00",res);
+        Assert.assertEquals("The original time has passed, new meeting time is set at: 2020-06-11 08:30:00",res);
 
     }
 }
