@@ -42,7 +42,7 @@ public class MeetingSystemV3 {
       LocalDateTime chicagoLocalTime = chicagoZonedTime.toLocalDateTime();
       String showTimeStr = formatter.format(chicagoLocalTime);
 
-      return "The original time has  passed, new meeting time is set at: "+showTimeStr;
+      return "The original time has passed, new meeting time is set at: "+showTimeStr;
     } else {
 
       ZonedDateTime chicagoZonedTime = beijingZonedTime.withZoneSameInstant(ZoneId.of("America/Chicago"));
