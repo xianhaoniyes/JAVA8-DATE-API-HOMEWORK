@@ -1,6 +1,6 @@
 package com.thoughtworks.capability.gtb;
 
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -17,25 +17,45 @@ import java.time.format.DateTimeFormatter;
  */
 public class MeetingSystemV3 {
 
-  public static void main(String[] args) {
-    String timeStr = "2020-04-01 14:30:00";
+  public static String timeTranslator(String timeStr){
 
     // 根据格式创建格式化类
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     // 从字符串解析得到会议时间
     LocalDateTime meetingTime = LocalDateTime.parse(timeStr, formatter);
+    ZoneId zoneId = ZoneId.of("Europe/London");
+    ZonedDateTime londonZonedTime = ZonedDateTime.of(meetingTime,zoneId);
 
+    ZonedDateTime beijingZonedTime = londonZonedTime.withZoneSameInstant(ZoneId.of("Asia/Shanghai"));
+    LocalDateTime beijingLocalDateTime = beijingZonedTime.toLocalDateTime();
     LocalDateTime now = LocalDateTime.now();
-    if (now.isAfter(meetingTime)) {
-      LocalDateTime tomorrow = now.plusDays(1);
-      int newDayOfYear = tomorrow.getDayOfYear();
-      meetingTime = meetingTime.withDayOfYear(newDayOfYear);
 
-      // 格式化新会议时间
-      String showTimeStr = formatter.format(meetingTime);
-      System.out.println(showTimeStr);
+    if (now.isAfter(beijingLocalDateTime)) {
+
+      Period period = Period.between(beijingLocalDateTime.toLocalDate(),now.toLocalDate());
+      period = period.plus(Period.ofDays(1));
+
+      beijingLocalDateTime = beijingLocalDateTime.plus(period);
+      beijingZonedTime = beijingLocalDateTime.atZone(ZoneId.of("Asia/Shanghai"));
+
+      ZonedDateTime chicagoZonedTime = beijingZonedTime.withZoneSameInstant(ZoneId.of("America/Chicago"));
+      LocalDateTime chicagoLocalTime = chicagoZonedTime.toLocalDateTime();
+      String showTimeStr = formatter.format(chicagoLocalTime);
+
+      return "The original time has  passed, new meeting time is set at: "+showTimeStr;
     } else {
-      System.out.println("会议还没开始呢");
+
+      ZonedDateTime chicagoZonedTime = beijingZonedTime.withZoneSameInstant(ZoneId.of("America/Chicago"));
+      LocalDateTime chicagoLocalTime = chicagoZonedTime.toLocalDateTime();
+      String showTimeStr = formatter.format(chicagoLocalTime);
+
+      return "The meeting hasn' start yet, the meeting time is: "+showTimeStr;
     }
+  }
+
+  public static void main(String[] args) {
+    String timeStr = "2020-04-01 14:30:00";
+    String res = MeetingSystemV3.timeTranslator(timeStr);
+    System.out.println(res);
   }
 }
